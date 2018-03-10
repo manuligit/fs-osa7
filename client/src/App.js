@@ -9,7 +9,7 @@ import userService from './services/users'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 class App extends React.Component {
   constructor(props) {
@@ -96,8 +96,12 @@ class App extends React.Component {
     const header = () => (
       <div>
         <h2>Blog app</h2>
-        {this.state.user.username} logged in
-        <button type="button" onClick={this.logout}>logout</button>
+        <Link to="/blogs">blogs</Link> &nbsp;
+        <Link to="/users">users</Link> &nbsp;
+        {this.state.user
+          ? <span><em>{this.state.user.username} logged in</em> <button type="button" onClick={this.logout}>logout</button></span>
+          : <span>{loginForm()}</span>
+        }
       </div>
     )
 
@@ -119,8 +123,7 @@ class App extends React.Component {
       <div>
         <Router path="/">
             <div>
-              {this.state.user !== null && header()}
-              {this.state.user === null && loginForm() }
+              {header()}
               <Notification message={this.state.message} />
               {this.state.user !== null && <Route exact path="/blogs" render={() => <BlogList user={this.state.user} notify={this.notify.bind(this)}/>}/>}
               {this.state.blogs.length > 0 && <Route exact path="/blogs/:id" render={({match}) => <Blog blog={blogById(match.params.id)} notify={this.notify.bind(this)} currentUser={this.state.user} />} /> }

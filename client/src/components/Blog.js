@@ -38,9 +38,8 @@ const Blog = ({ blog, notify, currentUser }) => {
   }
 
   const bloguser = (blog.user || {})
-  console.log(currentUser)
+  //console.log(currentUser)
   console.log('helloblog')
-  console.log(blog.user.name)
   return (
     <div>
         {blog.title} by {blog.author}<br/>
