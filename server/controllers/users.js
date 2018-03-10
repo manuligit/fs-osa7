@@ -11,6 +11,21 @@ usersRouter.get('/', async (request, response) => {
 
 })
 
+usersRouter.get('/:id', async (request, response) => {
+  try {
+    const user = await User.findById(request.params.id)
+
+    if (user) {
+      response.json(User.format(user))
+    } else {
+      response.status(404).end
+    }
+  } catch (exception) {
+    console.log(exception.name)
+    response.status(400).send({ error: 'malformatted id' })
+  }
+})
+
 usersRouter.post('/', async (request, response) => {
   try {
     const body = request.body

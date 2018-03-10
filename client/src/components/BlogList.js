@@ -1,11 +1,8 @@
 import React from 'react'
 import Blog from './Blog'
 import blogService from './../services/blogs'
-import loginService from './../services/login'
 import CreateBlogForm from './CreateBlogForm'
 import Notification from './Notification'
-import LoginForm from './LoginForm'
-import Togglable from './Togglable'
 import './../index.css'
 
 class BlogList extends React.Component {

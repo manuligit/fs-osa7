@@ -1,11 +1,13 @@
 import React from 'react'
 import BlogList from './components/BlogList'
 import UserList from './components/UserList'
+import User from './components/User'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import userService from './services/users'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 class App extends React.Component {
   constructor(props) {
@@ -14,11 +16,16 @@ class App extends React.Component {
       loginVisible: false,
       username: '',
       password: '',
-      user: null
+      user: null,
+      users: null
     }
   }
 
   async componentDidMount() {
+    const users = await userService.getAll()
+    console.log(users)
+    this.setState({ users: users })
+
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -93,6 +100,8 @@ class App extends React.Component {
       )
     }
 
+    const userById = (id) => this.state.users.find(user => user.id === id)
+
     return (
       <div>
         <Router>
@@ -100,9 +109,12 @@ class App extends React.Component {
               {this.state.user !== null && header()}
               {this.state.user === null && loginForm() }
               
-              {this.state.user !== null && <Route path="/blogs" render={() => <BlogList user={this.state.user}/>} />}
+              {this.state.user !== null && <Route exact path="/blogs" render={() => <BlogList user={this.state.user}/>} />}
 
-              <Route path="/users" render={() => <UserList />} />
+              <Route exact path="/users" render={() => <UserList />} />
+              {this.state.users !== null && <Route exact path="/users/:id" render={({match}) =>
+              <User user={userById(match.params.id)} />}
+              /> }
             </div>
         </Router>
       </div>
