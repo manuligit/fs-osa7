@@ -17,9 +17,6 @@ class BlogList extends React.Component {
       author: '',
       url: '',
       message: null,
-      loginVisible: false,
-      username: '',
-      password: '',
       user: null
     }
   }
@@ -31,16 +28,7 @@ class BlogList extends React.Component {
       return a.likes < b.likes
     })
 
-    this.setState({ blogs: blogs})
-  
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      this.setState({user})
-      blogService.setToken(user.token)
-    }
-
-    return Promise.resolve()
+    this.setState({ blogs: blogs, user: this.props.user })
   } 
 
   handleFormFieldChange = (event) => {
@@ -140,48 +128,8 @@ class BlogList extends React.Component {
     } catch (error) {
       console.log('could not delete, error ' + error.name)
     }
-
   }
 
-  login = async (event) => {
-    event.preventDefault()
-    try{
-      const user = await loginService.login({
-        username: this.state.username,
-        password: this.state.password
-      })
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      this.setState({ username: '', password: '', user})
-
-      this.setState({ message: `Logged in successfully` })
-      setTimeout(() => {
-        this.setState({ message: null })
-      }, 5000)
-
-
-    } catch(exception) {
-      this.setState({
-        message: 'Wrong username or password',
-      })
-      setTimeout(() => {
-        this.setState({ message: null })
-      }, 5000)
-    }
-  }
-
-  logout = () => {
-    window.localStorage.clear()
-
-    this.setState({ message: `Logged out successfully`, 
-                    username: '',
-                    password: '',
-                    user: null, })
-    setTimeout(() => {
-      this.setState({ message: null })
-    }, 5000)
-  }
 
   render() {
     const blogList = () => (
@@ -196,22 +144,10 @@ class BlogList extends React.Component {
       </div>
     )
 
-    const loginForm = () => {
-      return (
-        <Togglable buttonLabel="Login">
-            <LoginForm login={this.login} 
-                       username={this.state.username}
-                       handleFormFieldChange={this.handleFormFieldChange} 
-                       password={this.state.password}/>
-        </Togglable>
-      )
-
-    }
+    
     return (
       <div>
         <Notification message={this.state.message} />
-        {this.state.user === null && loginForm() }
-
         {this.state.user !== null && blogList()}
       </div>
     );
