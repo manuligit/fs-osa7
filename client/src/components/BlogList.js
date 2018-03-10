@@ -1,5 +1,4 @@
 import React from 'react'
-import Blog from './Blog'
 import blogService from './../services/blogs'
 import CreateBlogForm from './CreateBlogForm'
 import Notification from './Notification'
@@ -98,9 +97,17 @@ class BlogList extends React.Component {
 
 
   render() {
+    const blogStyle = {
+      paddingTop: 10,
+      paddingLeft: 2,
+      border: 'solid',
+      borderWidth: 1,
+      marginBottom: 5
+    } 
+
     const blogList = () => (
       <div>
-        {this.state.blogs.map(blog => <div key={blog.id}>
+        {this.state.blogs.map(blog => <div key={blog.id} style={blogStyle}>
           <Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link></div>
         )}
 

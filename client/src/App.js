@@ -103,15 +103,6 @@ class App extends React.Component {
       )
     }
 
-
-      const NotFound = () => (
-      
-      <div>
-        <h3>404 page not found</h3>
-        <p>We are sorry but the page you are looking for does not exist.</p>
-      </div>
-      )
-
     const userById = (id) => this.state.users.find(user => user.id === id)
     const blogById = (id) => this.state.blogs.find(blog => blog.id === id)
 
