@@ -5,6 +5,7 @@ const Notification = ({ message }) => {
     return null
   }
 
+  console.log('notifying')
   return (
     <div className="notification">
       {message}

@@ -8,6 +8,7 @@ import loginService from './services/login'
 import userService from './services/users'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
+import Notification from './components/Notification'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 class App extends React.Component {
@@ -19,7 +20,8 @@ class App extends React.Component {
       password: '',
       user: null,
       users: [],
-      blogs: []
+      blogs: [],
+      message: null
     }
   }
 
@@ -83,6 +85,13 @@ class App extends React.Component {
     }, 5000)
   }
 
+  notify = (message) => {
+    this.setState({ message: message })
+    setTimeout(() => {
+      this.setState({ message: null })
+    }, 5000)
+  }
+
   render () {
     const header = () => (
       <div>
@@ -112,9 +121,9 @@ class App extends React.Component {
             <div>
               {this.state.user !== null && header()}
               {this.state.user === null && loginForm() }
-              
-              {this.state.user !== null && <Route exact path="/blogs" render={() => <BlogList user={this.state.user}/>} />}
-              {this.state.blogs.length > 0 && <Route exact path="/blogs/:id" render={({match}) => <Blog blog={blogById(match.params.id)} />} /> }
+              <Notification message={this.state.message} />
+              {this.state.user !== null && <Route exact path="/blogs" render={() => <BlogList user={this.state.user} notify={this.notify.bind(this)}/>}/>}
+              {this.state.blogs.length > 0 && <Route exact path="/blogs/:id" render={({match}) => <Blog blog={blogById(match.params.id)} notify={this.notify.bind(this)} currentUser={this.state.user} />} /> }
               <Route exact path="/users" render={() => <UserList />} />
               {this.state.users.length > 0 && <Route exact path="/users/:id" render={({match}) =>
               <User user={userById(match.params.id)} />}

@@ -1,7 +1,6 @@
 import React from 'react'
 import blogService from './../services/blogs'
 import CreateBlogForm from './CreateBlogForm'
-import Notification from './Notification'
 import { Link } from 'react-router-dom'
 import './../index.css'
 
@@ -13,7 +12,6 @@ class BlogList extends React.Component {
       title: '',
       author: '',
       url: '',
-      message: null,
       user: null
     }
   }
@@ -44,57 +42,19 @@ class BlogList extends React.Component {
     try { 
       blogService.create(newBlog)
       let blogs = this.state.blogs.concat({...newBlog, likes: 0})
-      
       this.setState({ 
         author: '',
         title: '',
         url: '',
         blogs: blogs
       })
-
-      this.setState({ message: `${newBlog.title} created successfully` })
-      setTimeout(() => {
-        this.setState({ message: null })
-      }, 5000)
-
+      this.props.notify(`${newBlog.title} created successfully`) 
     }
     catch (error) {
+      console.log('components createblog error:')
       console.log(error.name)
     }
   }
-
-  deleteBlog = async (event) => {
-    //delete blog lul
-    const id = event.target.value
-    console.log(this.state.blogs)
-    console.log(id)
-    console.log(this.state.user.token)
-    try {
-      let response = await blogService.remove(id, this.state.user.token)
-      console.log(response)
-      console.log("delete ok, creating blog list")
-      console.log("state blogs length", this.state.blogs.length)
-      let blogs = this.state.blogs.filter(blog => blog.id !== id)
-      console.log("current blogs length", blogs.length)
-      
-      blogs.sort(function (a, b) {
-        return a.likes < b.likes
-      })
-
-      this.setState({
-        blogs: blogs
-      })
-
-      this.setState({ message: `Deleted blog `})
-      setTimeout(() => {
-        this.setState({ message: null })
-      }, 5000)
-
-    } catch (error) {
-      console.log('could not delete, error ' + error.name)
-    }
-  }
-
 
   render() {
     const blogStyle = {
@@ -119,7 +79,6 @@ class BlogList extends React.Component {
 
     return (
       <div>
-        <Notification message={this.state.message} />
         {this.state.user !== null && blogList()}
       </div>
     );
