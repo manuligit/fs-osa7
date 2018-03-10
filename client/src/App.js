@@ -1,4 +1,5 @@
 import React from 'react'
+import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import UserList from './components/UserList'
 import User from './components/User'
@@ -17,14 +18,16 @@ class App extends React.Component {
       username: '',
       password: '',
       user: null,
-      users: null
+      users: [],
+      blogs: []
     }
   }
 
   async componentDidMount() {
     const users = await userService.getAll()
-    console.log(users)
-    this.setState({ users: users })
+    //console.log(users)
+    const blogs = await blogService.getAll()
+    this.setState({ users: users, blogs: blogs })
 
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -100,26 +103,35 @@ class App extends React.Component {
       )
     }
 
+
+      const NotFound = () => (
+      
+      <div>
+        <h3>404 page not found</h3>
+        <p>We are sorry but the page you are looking for does not exist.</p>
+      </div>
+      )
+
     const userById = (id) => this.state.users.find(user => user.id === id)
+    const blogById = (id) => this.state.blogs.find(blog => blog.id === id)
 
     return (
       <div>
-        <Router>
+        <Router path="/">
             <div>
               {this.state.user !== null && header()}
               {this.state.user === null && loginForm() }
               
               {this.state.user !== null && <Route exact path="/blogs" render={() => <BlogList user={this.state.user}/>} />}
-
+              {this.state.blogs.length > 0 && <Route exact path="/blogs/:id" render={({match}) => <Blog blog={blogById(match.params.id)} />} /> }
               <Route exact path="/users" render={() => <UserList />} />
-              {this.state.users !== null && <Route exact path="/users/:id" render={({match}) =>
+              {this.state.users.length > 0 && <Route exact path="/users/:id" render={({match}) =>
               <User user={userById(match.params.id)} />}
               /> }
             </div>
-        </Router>
-      </div>
-    );
-    
+          </Router>
+        </div>
+      );
   }
 }
 

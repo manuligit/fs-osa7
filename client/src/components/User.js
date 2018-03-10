@@ -1,6 +1,7 @@
 import React from 'react'
 
 const User = ({ user }) => {
+  console.log('user js', user)
   const blogList = () => { 
     return (
       <div>
