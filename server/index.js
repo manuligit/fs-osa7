@@ -9,7 +9,6 @@ const config = require('./utils/config')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
-const commentsRouter = require('./controllers/comments')
 
 mongoose.connect(config.mongoUrl)
 mongoose.Promise = global.Promise

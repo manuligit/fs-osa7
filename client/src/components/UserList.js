@@ -15,6 +15,7 @@ class UserList extends React.Component {
     const users =  await userService.getAll()
     this.setState({ users: users })
   }
+  
   render () {
     return (
       <div>
