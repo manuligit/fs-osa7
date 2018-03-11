@@ -9,7 +9,7 @@ const config = require('./utils/config')
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
-
+const commentsRouter = require('./controllers/comments')
 
 mongoose.connect(config.mongoUrl)
 mongoose.Promise = global.Promise
@@ -21,7 +21,6 @@ app.use(bodyParser.json())
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
-
 
 app.get('*', function(req, res) {
   res.send('/')

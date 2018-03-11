@@ -12,7 +12,7 @@ const Blog = ({ blog, notify, currentUser }) => {
       console.log(blog.likes)
       const addedLike = {...blog, likes: blog.likes+1}
       //update the object and blog list
-      let blogs = await blogService.getAll()
+      //let blogs = await blogService.getAll()
       await blogService.update(id, addedLike)
       notify(`Liked ${blog.title} `) 
       blog.likes = blog.likes + 1
@@ -37,6 +37,30 @@ const Blog = ({ blog, notify, currentUser }) => {
     }
   }
 
+  const comment = async (event) => {
+    event.preventDefault()
+    console.log('pushed button')
+  }
+
+  const commentList = (
+    <ul>
+    {blog.comments.map(comment => <li key={comment._id}>{comment.content}</li>)}
+    </ul>
+  )
+
+  const addCommentForm = (
+      <div>
+        <form onSubmit={comment}>
+            <input 
+              type="text" 
+              name="comment"
+            />
+          <button type="submit">Add comment</button>
+        </form>
+      </div>
+    )
+  
+
   const bloguser = (blog.user || {})
   //console.log(currentUser)
   console.log('helloblog')
@@ -49,7 +73,13 @@ const Blog = ({ blog, notify, currentUser }) => {
         
         {currentUser && 
         currentUser.name === bloguser.name ? (<button onClick={deleteBlog} value={blog.id}>delete</button>) : null }
+          
+        <h3> Comments </h3>
+        {blog.comments.length === 0 && <div>No comments.</div>}
 
+        {blog.comments && commentList}
+
+        {addCommentForm}
     </div>
   )
 }

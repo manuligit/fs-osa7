@@ -1,14 +1,22 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const Comment = require('../models/comment')
 const jwt = require('jsonwebtoken')
 
-blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog
-    .find({})
-    .populate('user', { id: 1, username: 1, name: 1 })
 
-  response.json((blogs.map(Blog.format)))
+blogsRouter.get('/', async (request, response) => {
+  try {
+    const blogs = await Blog
+      .find({})
+      .populate('user', { id: 1, username: 1, name: 1 })
+      .populate('comments', { content: 1 })
+
+    response.json((blogs.map(Blog.format)))
+  } catch (exception) {
+    console.log(exception.name)
+    response.status(400).send({ error: 'something went wrong' })
+  }
 })
 
 blogsRouter.get('/:id', async (request, response) => {
@@ -25,6 +33,23 @@ blogsRouter.get('/:id', async (request, response) => {
     response.status(400).send({ error: 'malformatted id' })
   }
 })
+
+blogsRouter.get('/:id/comments', async (request, response) => {
+  try {
+    const blog = await Blog.findById(request.params.id).populate('comments', { id:1, content: 1 })
+    if (blog) {
+      //console.log(blog.comments)
+      const comments = blog.comments
+      response.json(comments.map(Comment.format))
+    } else {
+      response.status(404).end
+    }
+  } catch (exception) {
+    console.log(exception.name)
+    response.status(400).send({ error: 'malformatted id' })
+  }
+})
+
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
@@ -68,6 +93,27 @@ blogsRouter.post('/', async (request, response) => {
       console.log(exception)
       response.status(500).json({ error: 'Something went wrong' })
     }
+  }
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const body = request.body
+  console.log('post')
+  try {
+    const comment = new Comment({
+      content: body.content
+    })
+    const savedComment = await comment.save()
+    const blog = await Blog.findById(request.params.id)
+    console.log(blog)
+    blog.comments = blog.comments.concat(savedComment._id)
+    await blog.save()
+
+    response.json(Comment.format(savedComment))
+
+  } catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'Something went wrong' })
   }
 })
 
