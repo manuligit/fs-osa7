@@ -1,5 +1,6 @@
 import React from 'react'
 import blogService from './../services/blogs'
+import Comment from './Comment'
 
 const Blog = ({ blog, notify, currentUser }) => {
   const addLike = async (event) => {
@@ -37,30 +38,6 @@ const Blog = ({ blog, notify, currentUser }) => {
     }
   }
 
-  const comment = async (event) => {
-    event.preventDefault()
-    console.log('pushed button')
-  }
-
-  const commentList = (
-    <ul>
-    {blog.comments.map(comment => <li key={comment._id}>{comment.content}</li>)}
-    </ul>
-  )
-
-  const addCommentForm = (
-      <div>
-        <form onSubmit={comment}>
-            <input 
-              type="text" 
-              name="comment"
-            />
-          <button type="submit">Add comment</button>
-        </form>
-      </div>
-    )
-  
-
   const bloguser = (blog.user || {})
   //console.log(currentUser)
   console.log('helloblog')
@@ -74,12 +51,7 @@ const Blog = ({ blog, notify, currentUser }) => {
         {currentUser && 
         currentUser.name === bloguser.name ? (<button onClick={deleteBlog} value={blog.id}>delete</button>) : null }
           
-        <h3> Comments </h3>
-        {blog.comments.length === 0 && <div>No comments.</div>}
-
-        {blog.comments && commentList}
-
-        {addCommentForm}
+        <Comment blog={blog} notify={notify}/>
     </div>
   )
 }
